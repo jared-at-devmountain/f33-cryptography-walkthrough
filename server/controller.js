@@ -1,3 +1,5 @@
+let bcrypt = require('bcryptjs');
+
 let userDatase = []
 
 let randomFortunes = [
@@ -24,25 +26,36 @@ module.exports = {
             return
         }
 
-        if (userObj.password === password) {
-            let randomFortune = randomFortunes[Math.floor(Math.random() * randomFortunes.length)]
+        bcrypt.compare(password, userObj.hash).then((isMatching) => {
+            if (isMatching) {
+                let randomFortune = randomFortunes[Math.floor(Math.random() * randomFortunes.length)]
 
-            res.send({success: true, fortune: randomFortune})
-        } else {
-            res.status(200).send({sucess: false, message: 'bad password'})
-        }
+                res.send({success: true, fortune: randomFortune})
+            } else {
+                res.status(200).send({sucess: false, message: 'bad password'})
+            }
+        })
     },
     signUp: (req, res) => {
         let { email, password, firstName, lastName } = req.body
+        let saltRounds = 10
 
-        userDatase.push({
-            email,
-            password,
-            firstName,
-            lastName,
-            id: startingId++
+        bcrypt.hash(password, saltRounds, function(err, hash) {
+            if (err) {
+                console.log(err)
+                res.status(500).send({success: false})
+                return
+            }
+
+            userDatase.push({
+                email,
+                hash,
+                firstName,
+                lastName,
+                id: startingId++
+            })
+
+            res.send({success: true})
         })
-
-        res.send({success: true})
     }
 }
