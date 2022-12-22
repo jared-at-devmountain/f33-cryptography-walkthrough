@@ -20,7 +20,7 @@ function logIn(event) {
 
     axios.post(baseUrl + '/login', postBody)
     .then(response => {
-        console.log(response.data)
+        console.log(response)
     })
     .catch(error => {
         console.log(error)
@@ -39,7 +39,11 @@ function signUp(event) {
 
     axios.post(baseUrl + '/signup', postBody)
     .then(response => {
-        console.log(response.data)
+        if (response.data.success) {
+            alert('You made an account! Now log in.')
+        } else {
+            alert('Something went wrong.')
+        }
     })
     .catch(error => {
         console.log(error)
