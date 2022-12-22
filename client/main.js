@@ -20,7 +20,12 @@ function logIn(event) {
 
     axios.post(baseUrl + '/login', postBody)
     .then(response => {
-        console.log(response)
+        if (response.data.success) {
+            alert('Your fortune for this moment is: ' + response.data.fortune)
+            alert('Please log in again if you want to see another fortune.')
+        } else {
+            alert(response.data.message)
+        }
     })
     .catch(error => {
         console.log(error)
